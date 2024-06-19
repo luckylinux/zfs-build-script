@@ -36,28 +36,12 @@ cd zfs-$version
 #wget https://raw.githubusercontent.com/chimera-linux/cports/master/main/zfs/patches/aarch64-disable-neon.patch -O aarch64-disable-neon.patch
 #patch -p1 < aarch64-disable-neon.patch
 
+# Configure
 sh autogen.sh
 ./configure
 make clean
 
-# Must exclude python3
-#zfs-2.2.3/contrib/debian/control:         python3-distutils | libpython3-stdlib (<< 3.6.4),
-#zfs-2.2.3/debian/openzfs-zfs-dkms/DEBIAN/control:Depends: dkms (>> 2.1.1.2-5), file, libc6-dev | libc-dev, lsb-release, python3-distutils | libpython3-stdlib (<< 3.6.4), debconf (>= 0.5) | debconf-2.0, perl:any
-#zfs-2.2.3/debian/control:         python3-distutils | libpython3-stdlib (<< 3.6.4),
-
-#sed -Ei "/s/,\s*?python3-distutils.*?,/,/g" contrib/debian/control
-#sed -Ei "/s/,\s*?python3-distutils.*?,/,/g" debian/openzfs-zfs-dkms/DEBIAN/control
-#sed -Ei "/s/,\s*?python3-distutils.*?,/,/g" debian/control
-
-#regexcmd="s/,\s*?python3-distutils\s*?|\s*?libpython3-stdlib \(.*?\),//g"
-#sed -Ei ${regexcmd} contrib/debian/control
-#sed -Ei ${regexcmd} debian/openzfs-zfs-dkms/DEBIAN/control
-#sed -Ei ${regexcmd} debian/control
-
-#sed -Ei "s/, python3-distutils | libpython3-stdlib (<< 3.6.4), /, /g" ./debian/openzfs-zfs-dkms/DEBIAN/control
-#sed -Ei "s/python3-distutils | libpython3-stdlib (<< 3.6.4),//g" ./contrib/debian/control
-#sed -Ei "s/python3-distutils | libpython3-stdlib (<< 3.6.4),//g" ./debian/control
-
+# Build
 make -s -j$(nproc)
 make native-deb
 make native-deb-utils native-deb-dkms
@@ -77,5 +61,5 @@ mv ../../openzfs-zfs-initramfs_$version*.deb ./
 mv ../../openzfs-zfs-zed_$version*.deb ./
 mv ../../openzfs-zfsutils_$version*.deb ./
 
-
+# Install Packages
 sudo apt-get install --fix-missing ./*.deb
