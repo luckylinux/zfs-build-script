@@ -9,13 +9,14 @@ sudo apt --no-install-recommends install dkms
 sudo apt install dh-dkms
 sudo apt install aptitude libcurl4-openssl-dev libpam0g-dev lsb-release build-essential autoconf automake libtool libblkid-dev uuid-dev libudev-dev libssl-dev zlib1g-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev python3-packaging git libcurl4-openssl-dev debhelper-compat dh-python po-debconf python3-all-dev python3-sphinx
 sudo apt install build-essential autoconf automake libtool gawk fakeroot libblkid-dev uuid-dev libudev-dev libssl-dev zlib1g-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev python3-packaging git libcurl4-openssl-dev debhelper-compat dh-python po-debconf python3-all-dev python3-sphinx
+sudo apt install libtirpc-dev libtirpc
 
 # Define Desired Version
-version="2.2.6"
+version="2.2.7"
 
-#cd /usr/src
-#mkdir -p zfs
-#cd zfs
+cd /usr/src
+mkdir -p zfs
+cd zfs
 
 # Use git and clone zfs-$version tag
 #git clone https://github.com/openzfs/zfs.git --depth 1 --tag zfs-$version
