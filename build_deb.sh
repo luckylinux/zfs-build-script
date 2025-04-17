@@ -2,7 +2,10 @@
 
 # Determine toolpath if not set already
 relativepath="./" # Define relative path to go from this script to the root level of the tool
-if [[ ! -v zfssource ]]; then scriptpath=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ); zfssourcepath=$(realpath --canonicalize-missing ${scriptpath}/${relativepath}); fi
+if [[ ! -v zfssourcepath ]]; then scriptpath=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ); zfssourcepath=$(realpath --canonicalize-missing ${scriptpath}/${relativepath}); fi
+
+# Load Functions
+source "${zfssourcepath}/functions.sh"
 
 # Install Requirements
 sudo apt --no-install-recommends install dkms
@@ -12,7 +15,7 @@ sudo apt install build-essential autoconf automake libtool gawk fakeroot libblki
 sudo apt install libtirpc-dev libtirpc
 
 # Define Desired Version
-version="2.2.7"
+version="2.3.1"
 
 cd /usr/src
 mkdir -p zfs
@@ -56,16 +59,19 @@ cd ..
 mkdir -p selected-packages
 mkdir -p selected-packages/$version
 cd selected-packages/$version/
-mv ../../openzfs-libnvpair3_$version*.deb ./
-mv ../../openzfs-libpam-zfs_$version*.deb ./
-mv ../../openzfs-libuutil3_$version*.deb ./
-mv ../../openzfs-libzfs4_$version*.deb ./
-mv ../../openzfs-libzpool5_$version*.deb ./
-mv ../../openzfs-zfs-dkms_$version*.deb ./
-mv ../../openzfs-zfs-initramfs_$version*.deb ./
-#mv ../../openzfs-zfs-modules-*_$version*.deb ./
-mv ../../openzfs-zfs-zed_$version*.deb ./
-mv ../../openzfs-zfsutils_$version*.deb ./
+move_file ../../openzfs-libnvpair3_$version*.deb ./
+move_file ../../openzfs-libpam-zfs_$version*.deb ./
+move_file ../../openzfs-libuutil3_$version*.deb ./
+move_file ../../openzfs-libzfs4_$version*.deb ./
+move_file ../../openzfs-libzfs5_$version*.deb ./
+move_file ../../openzfs-libzfs6_$version*.deb ./
+move_file ../../openzfs-libzpool5_$version*.deb ./
+move_file ../../openzfs-libzpool6_$version*.deb ./
+move_file ../../openzfs-zfs-dkms_$version*.deb ./
+move_file ../../openzfs-zfs-initramfs_$version*.deb ./
+#move_file ../../openzfs-zfs-modules-*_$version*.deb ./
+move_file ../../openzfs-zfs-zed_$version*.deb ./
+move_file ../../openzfs-zfsutils_$version*.deb ./
 
-
+# Install DEB Packages
 sudo apt install --fix-missing ./*.deb

@@ -1,10 +1,18 @@
 #!/bin/bash
+
+# Determine toolpath if not set already
+relativepath="./" # Define relative path to go from this script to the root level of the tool
+if [[ ! -v zfssourcepath ]]; then scriptpath=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ); zfssourcepath=$(realpath --canonicalize-missing ${scriptpath}/${relativepath}); fi
+
+# Load Functions
+source "${zfssourcepath}/functions.sh"
+
 # Install Requirements
 dnf install gcc make autoconf automake libtool rpm-build libtirpc-devel libblkid-devel libuuid-devel libudev-devel openssl-devel zlib-devel libaio-devel libattr-devel elfutils-libelf-devel kernel-devel-$(uname -r) python3 python3-devel python3-setuptools python3-cffi libffi-devel git ncompress libcurl-devel
 dnf install bc bison flex libtirpc-devel python3-packaging dkms wget
 
 # Define Desired Version
-version="2.2.4"
+version="2.3.1"
 
 cd /usr/src
 mkdir -p zfs
@@ -46,13 +54,16 @@ cd $basedir
 mkdir -p selected-packages
 mkdir -p selected-packages/$version
 cd selected-packages/$version/
-mv ../../zfs-$version/libnvpair3-$version*.aarch64.rpm ./
-mv ../../zfs-$version/libuutil3-$version*.aarch64.rpm ./
-mv ../../zfs-$version/libzfs5-$version*.aarch64.rpm ./
-mv ../../zfs-$version/libzpool5-$version*.aarch64.rpm ./
-mv ../../zfs-$version/zfs-$version*.aarch64.rpm ./
-mv ../../zfs-$version/zfs-dkms-$version*.noarch.rpm ./
-mv ../../zfs-$version/zfs-dracut-$version*.noarch.rpm ./
+move_file ../../zfs-$version/libnvpair3-$version*.aarch64.rpm ./
+move_file ../../zfs-$version/libuutil3-$version*.aarch64.rpm ./
+move_file ../../zfs-$version/libzfs4-$version*.aarch64.rpm ./
+move_file ../../zfs-$version/libzfs5-$version*.aarch64.rpm ./
+move_file ../../zfs-$version/libzfs6-$version*.aarch64.rpm ./
+move_file ../../zfs-$version/libzpool5-$version*.aarch64.rpm ./
+move_file ../../zfs-$version/libzpool6-$version*.aarch64.rpm ./
+move_file ../../zfs-$version/zfs-$version*.aarch64.rpm ./
+move_file ../../zfs-$version/zfs-dkms-$version*.noarch.rpm ./
+move_file ../../zfs-$version/zfs-dracut-$version*.noarch.rpm ./
 
 # Install Selected Packages
 sudo dnf install ./*.rpm
