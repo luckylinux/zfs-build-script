@@ -14,6 +14,9 @@ source "${zfssourcepath}/functions.sh"
 dnf install gcc make autoconf automake libtool rpm-build libtirpc-devel libblkid-devel libuuid-devel libudev-devel openssl-devel zlib-devel libaio-devel libattr-devel elfutils-libelf-devel kernel-devel-$(uname -r) python3 python3-devel python3-setuptools python3-cffi libffi-devel git ncompress libcurl-devel
 dnf install bc bison flex libtirpc-devel python3-packaging dkms wget
 
+# Create Build Folder if it doesn't exist yet
+mkdir -p "${zfssourcepath}/${zfs_build_subfolder}"
+
 # Change to Build Folder
 cd "${zfssourcepath}/${zfs_build_subfolder}"
 
@@ -49,10 +52,10 @@ make clean
 make -s -j$(nproc)
 make rpm
 
-# Select Subset of Packages to prevent installation of default linux-image and linux-headers
-cd "${zfssourcepath}"
+# Create Folder for Selected Packages if it doesn't exist already
 mkdir -p "${zfssourcepath}/${zfs_selected_subfolder}/${zfs_version}"
 
+# Select Subset of Packages to prevent installation of default linux-image and linux-headers
 cd "${zfssourcepath}/${zfs_selected_subfolder}/${zfs_version}"
 
 move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/libnvpair3-${zfs_version}*.aarch64.rpm ./

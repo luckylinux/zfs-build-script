@@ -17,6 +17,9 @@ sudo apt install aptitude libcurl4-openssl-dev libpam0g-dev lsb-release build-es
 sudo apt install build-essential autoconf automake libtool gawk fakeroot libblkid-dev uuid-dev libudev-dev libssl-dev zlib1g-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev python3-packaging git libcurl4-openssl-dev debhelper-compat dh-python po-debconf python3-all-dev python3-sphinx
 sudo apt install libtirpc-dev libtirpc
 
+# Create Build Folder if it doesn't exist yet
+mkdir -p "${zfssourcepath}/${zfs_build_subfolder}"
+
 # Change to Build Folder
 cd "${zfssourcepath}/${zfs_build_subfolder}"
 
@@ -53,10 +56,10 @@ make -s -j$(nproc)
 make native-deb
 make native-deb-utils native-deb-dkms
 
-# Select Subset of Packages to prevent installation of default linux-image and linux-headers
-cd "${zfssourcepath}"
+# Create Folder for Selected Packages if it doesn't exist already
 mkdir -p "${zfssourcepath}/${zfs_selected_subfolder}/${zfs_version}"
 
+# Select Subset of Packages to prevent installation of default linux-image and linux-headers
 cd "${zfssourcepath}/${zfs_selected_subfolder}/${zfs_version}"
 
 move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libnvpair3_${zfs_version}*.deb ./
