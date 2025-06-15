@@ -4,6 +4,9 @@
 relativepath="./" # Define relative path to go from this script to the root level of the tool
 if [[ ! -v zfssourcepath ]]; then scriptpath=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ); zfssourcepath=$(realpath --canonicalize-missing ${scriptpath}/${relativepath}); fi
 
+# Load Configuration
+source "${zfssourcepath}/config.sh"
+
 # Load Functions
 source "${zfssourcepath}/functions.sh"
 
@@ -11,34 +14,31 @@ source "${zfssourcepath}/functions.sh"
 dnf install gcc make autoconf automake libtool rpm-build libtirpc-devel libblkid-devel libuuid-devel libudev-devel openssl-devel zlib-devel libaio-devel libattr-devel elfutils-libelf-devel kernel-devel-$(uname -r) python3 python3-devel python3-setuptools python3-cffi libffi-devel git ncompress libcurl-devel
 dnf install bc bison flex libtirpc-devel python3-packaging dkms wget
 
-# Define Desired Version
-version="2.3.1"
+# Change to Build Folder
+cd "${zfssourcepath}/${zfs_build_subfolder}"
 
-cd /usr/src
-mkdir -p zfs
-cd zfs
-
-# Save basedir
-basedir=$(pwd)
-
-# Use git and clone zfs-$version tag
-#git clone https://github.com/openzfs/zfs.git --depth 1 --tag zfs-$version
+# Use git and clone zfs-${zfs_version} tag
+# git clone https://github.com/openzfs/zfs.git --depth 1 --tag zfs-${zfs_version}
 #
 # Use tar (working)
-wget https://github.com/openzfs/zfs/archive/refs/tags/zfs-$version.tar.gz -O zfs-$version.tar.gz
-mkdir -p zfs-$version
-tar xvf zfs-$version.tar.gz -C zfs-$version --strip-components 1
+wget https://github.com/openzfs/zfs/archive/refs/tags/zfs-${zfs_version}.tar.gz -O zfs-${zfs_version}.tar.gz
+mkdir -p zfs-${zfs_version}
+tar xvf zfs-${zfs_version}.tar.gz -C zfs-${zfs_version} --strip-components 1
 
 # Use tar (currently broken archive)
-#wget https://github.com/openzfs/zfs/releases/download/zfs-$version/zfs-$version.tar.gz -O zfs-$version.tar.gz
-#tar xvf zfs-$version.tar.gz
+# wget https://github.com/openzfs/zfs/releases/download/zfs-${zfs_version}/zfs-${zfs_version}.tar.gz -O zfs-${zfs_version}.tar.gz
+# tar xvf zfs-${zfs_version}.tar.gz
 
 # Change working direectory
-cd zfs-$version
+cd zfs-${zfs_version}
 
 # Apply Patch in order to disable SIMD and Enable successfully ZFS Compile
-wget https://gist.githubusercontent.com/luckylinux/6b3778d01e30ed1421178d2c6cac2e6f/raw/aac79a82fa087de318bb6eb147a7279660531659/aarch64-disable-neon.patch -O aarch64-disable-neon.patch
-patch -p1 < aarch64-disable-neon.patch
+# No longer needed on ZFS >= 2.2.6
+# if [[ $(uname -m) == "aarch64" ]]
+# then
+#     wget https://gist.githubusercontent.com/luckylinux/6b3778d01e30ed1421178d2c6cac2e6f/raw/aac79a82fa087de318bb6eb147a7279660531659/aarch64-disable-neon.patch -O aarch64-disable-neon.patch
+#     patch -p1 < aarch64-disable-neon.patch
+# fi
 
 # Configure
 sh autogen.sh
@@ -50,20 +50,21 @@ make -s -j$(nproc)
 make rpm
 
 # Select Subset of Packages to prevent installation of default linux-image and linux-headers
-cd $basedir
-mkdir -p selected-packages
-mkdir -p selected-packages/$version
-cd selected-packages/$version/
-move_file ../../zfs-$version/libnvpair3-$version*.aarch64.rpm ./
-move_file ../../zfs-$version/libuutil3-$version*.aarch64.rpm ./
-move_file ../../zfs-$version/libzfs4-$version*.aarch64.rpm ./
-move_file ../../zfs-$version/libzfs5-$version*.aarch64.rpm ./
-move_file ../../zfs-$version/libzfs6-$version*.aarch64.rpm ./
-move_file ../../zfs-$version/libzpool5-$version*.aarch64.rpm ./
-move_file ../../zfs-$version/libzpool6-$version*.aarch64.rpm ./
-move_file ../../zfs-$version/zfs-$version*.aarch64.rpm ./
-move_file ../../zfs-$version/zfs-dkms-$version*.noarch.rpm ./
-move_file ../../zfs-$version/zfs-dracut-$version*.noarch.rpm ./
+cd "${zfssourcepath}"
+mkdir -p "${zfssourcepath}/${zfs_selected_subfolder}/${zfs_version}"
+
+cd "${zfssourcepath}/${zfs_selected_subfolder}/${zfs_version}"
+
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/libnvpair3-${zfs_version}*.aarch64.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/libuutil3-${zfs_version}*.aarch64.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/libzfs4-${zfs_version}*.aarch64.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/libzfs5-${zfs_version}*.aarch64.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/libzfs6-${zfs_version}*.aarch64.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/libzpool5-${zfs_version}*.aarch64.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/libzpool6-${zfs_version}*.aarch64.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/zfs-${zfs_version}*.aarch64.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/zfs-dkms-${zfs_version}*.noarch.rpm ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/zfs-${zfs_version}/zfs-dracut-${zfs_version}*.noarch.rpm ./
 
 # Install Selected Packages
 sudo dnf install ./*.rpm

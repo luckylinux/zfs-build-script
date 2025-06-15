@@ -1,0 +1,14 @@
+# Exclude build Folder
+build
+build/*
+build/**
+
+# Exclude Packages Folder
+packages
+packages/*
+packages/**
+
+# Exclude Packages Folder
+selected-packages
+selected-packages/*
+selected-packages/**
