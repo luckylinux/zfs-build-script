@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define ZFS Version to Use
-zfs_version="2.3.5"
+zfs_version="2.4.0"
 
 # Define ZFS Build Subfolder
 zfs_build_subfolder="build"
