@@ -38,18 +38,7 @@ tar xvf zfs-${zfs_version}.tar.gz -C zfs-${zfs_version} --strip-components 1
 # Change working direectory
 cd zfs-${zfs_version}
 
-# Apply Patch related to Symlink Creation Failure (ZFS 2.2.6)
-wget https://raw.githubusercontent.com/robn/zfs/a9dd2cc828ccb9f2726ee5c3b16c32ca963083c3/contrib/bash_completion.d/Makefile.am -O contrib/bash_completion.d/Makefile.am
-
-# Apply Patch in order to disable SIMD on AARC64 and Enable successfully ZFS Compile
-# No longer needed on ZFS >= 2.2.6
-# if [[ $(uname -m) == "aarch64" ]]
-# then
-#     ####wget https://raw.githubusercontent.com/chimera-linux/cports/master/main/zfs/patches/aarch64-disable-neon.patch -O aarch64-disable-neon.patch
-#     wget https://gist.githubusercontent.com/luckylinux/6b3778d01e30ed1421178d2c6cac2e6f/raw/aac79a82fa087de318bb6eb147a7279660531659/aarch64-disable-neon.patch -O aarch64-disable-neon.patch
-#     patch -p1 < aarch64-disable-neon.patch
-# fi
-
+# Build ZFS
 sh autogen.sh
 ./configure
 make -s -j$(nproc)
@@ -68,8 +57,10 @@ move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libuutil3_${zfs_versio
 move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libzfs4_${zfs_version}*.deb ./
 move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libzfs5_${zfs_version}*.deb ./
 move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libzfs6_${zfs_version}*.deb ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libzfs7_${zfs_version}*.deb ./
 move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libzpool5_${zfs_version}*.deb ./
 move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libzpool6_${zfs_version}*.deb ./
+move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-libzpool7_${zfs_version}*.deb ./
 move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-zfs-dkms_${zfs_version}*.deb ./
 move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-zfs-initramfs_${zfs_version}*.deb ./
 # move_file ${zfssourcepath}/${zfs_build_subfolder}/openzfs-zfs-modules-*_${zfs_version}*.deb ./
